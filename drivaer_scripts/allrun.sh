@@ -2,9 +2,9 @@
 
 ### BEGIN user parameters
 
-mesh=S
-num_proc=$SLURM_NPROCS
-ppn=120
+mesh=${1:-S}
+num_proc=${2:-$SLURM_NPROCS}
+ppn=${3:-120}
 #ppn=$SLURM_NTASKS_PER_NODE
 
 ### END user parameters
@@ -12,7 +12,7 @@ ppn=120
 # Calculate numa topology
 numa_nodes=$(numactl -H|grep available|awk '{print $2}')
 ranks_per_numa=$(( ppn / numa_nodes ))
-MPIEXEC_FLAGS="-np $num_proc $(env |grep FOAM | cut -d'=' -f1 | sed 's/^/-x /g' | tr '\n' ' ') -x MPI_BUFFER_SIZE --report-bindings --map-by ppr:${ranks_per_numa}:numa"
+MPIFLAGS="-np $num_proc $(env |grep FOAM | cut -d'=' -f1 | sed 's/^/-x /g' | tr '\n' ' ') -x MPI_BUFFER_SIZE --report-bindings --map-by ppr:${ranks_per_numa}:numa"
 
 foamDictionary -entry numberOfSubdomains -set "$num_proc" system/decomposeParDict
 
