@@ -32,7 +32,7 @@ decomposePar -copyZero | tee log.decomposePar
 r=0
 while [ $r -lt $nRefine ]; do
     echo "Refining the background mesh. Iteration $r"
-    mpiexec $MPIFLAGS refineMesh -overwrite | tee -a log.refineMesh
+    mpiexec $MPIFLAGS refineMesh -parallel -overwrite | tee -a log.refineMesh
     r=$(( r + 1 ))
 done
 
