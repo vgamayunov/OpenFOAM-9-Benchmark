@@ -17,7 +17,7 @@ ppn=$5
 cores_per_node=${6:-120}
 
 mydir=$(pwd)
-workdir=$rundir/run.${partition}.N${num_nodes}.ppn${ppn}.$(date +%Y%m%d-%H%M%S)
+workdir=$rundir/run.${mesh}.${partition}.N${num_nodes}.ppn${ppn}.$(date +%Y%m%d-%H%M%S)
 mkdir -pv $workdir
 cd $workdir
 sbatch -p $partition -N $num_nodes --ntasks-per-node=$cores_per_node $mydir/job_slurm.sh $mydir $mesh $ppn
