@@ -5,18 +5,17 @@
 #  1. Directory where the workload files and scripts are located
 #  2. Mesh size
 #  3. Number of MPI ranks per node
-#
 
 script_dir=$1
 mesh=$2
 ppn=$3
 
-num_proc=(( SLURM_NNODES * ppn ))
+num_proc=$(( SLURM_NNODES * ppn ))
 
 cp -rv $script_dir/../drivaerFastback .
 cd drivaerFastback
 
-source $script_dir/setenv.sh
+source $HOME/OpenFOAM/setenv.sh
 
 $script_dir/allrun.sh $mesh $num_proc $ppn
 

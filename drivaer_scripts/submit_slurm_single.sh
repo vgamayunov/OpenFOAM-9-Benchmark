@@ -7,7 +7,7 @@ set -euo pipefail
 #  3. Mesh size. Values: <S|M|L|XL>
 #  4. Number of nodes
 #  5. Number of MPI ranks per node
-#  6. Total number of cores per node
+#  6. Total number of cores per node (default=120)
 
 partition=$1
 rundir=$2
@@ -17,7 +17,7 @@ ppn=$5
 cores_per_node=${6:-120}
 
 mydir=$(pwd)
-workdir=$rundir/run.${partition}.N${num_nodes}.ppn${ppn}
+workdir=$rundir/run.${partition}.N${num_nodes}.ppn${ppn}.$(date +%Y%m%d-%H%M%S)
 mkdir -pv $workdir
 cd $workdir
 sbatch -p $partition -N $num_nodes --ntasks-per-node=$cores_per_node $mydir/job_slurm.sh $mydir $mesh $ppn
