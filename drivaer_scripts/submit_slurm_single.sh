@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -euo pipefail
 # Submits a SLURM job for parametric sweep.
 # Arguments:
 #  1. SLURM partition name
