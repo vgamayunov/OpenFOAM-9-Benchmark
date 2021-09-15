@@ -1,12 +1,10 @@
 #!/bin/bash
 
 ### BEGIN user parameters
-
 mesh=${1:-S}
 num_proc=${2:-$SLURM_NPROCS}
 ppn=${3:-120}
 #ppn=$SLURM_NTASKS_PER_NODE
-
 ### END user parameters
 
 # Calculate numa topology
@@ -28,6 +26,8 @@ esac
 blockMesh | tee log.blockMesh
 
 decomposePar -copyZero | tee log.decomposePar
+
+echo "Refining the background mesh. Target size: $mesh"
 
 r=0
 while [ $r -lt $nRefine ]; do
