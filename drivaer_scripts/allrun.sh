@@ -3,13 +3,18 @@
 ### BEGIN user parameters
 mesh=${1:-S}
 num_proc=${2:-$SLURM_NPROCS}
-ppn=${3:-120}
-#ppn=$SLURM_NTASKS_PER_NODE
+ppn=${3:-$SLURM_NTASKS_PER_NODE}
 ### END user parameters
 
 # Calculate numa topology
 numa_nodes=$(numactl -H|grep available|awk '{print $2}')
 ranks_per_numa=$(( ppn / numa_nodes ))
+
+if (( ranks_per_numa * numa_nodes != ppn )) ; then
+    echo "ERROR: PPN ($ppn) is not divisible by number of NUMA nodes ($numa_nodes)!"
+    exit 1
+fi
+
 MPIFLAGS="-np $num_proc $(env |grep FOAM | cut -d'=' -f1 | sed 's/^/-x /g' | tr '\n' ' ') -x MPI_BUFFER_SIZE --report-bindings --map-by ppr:${ranks_per_numa}:numa"
 
 foamDictionary -entry numberOfSubdomains -set "$num_proc" system/decomposeParDict
@@ -27,7 +32,7 @@ blockMesh | tee log.blockMesh
 
 decomposePar -copyZero | tee log.decomposePar
 
-echo "Refining the background mesh. Target size: $mesh"
+echo "Target mesh size: $mesh"
 
 r=0
 while [ $r -lt $nRefine ]; do
